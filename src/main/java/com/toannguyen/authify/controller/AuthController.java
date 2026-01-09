@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -14,7 +13,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +22,6 @@ import com.toannguyen.authify.dto.auth.AuthResponse;
 import com.toannguyen.authify.service.impl.AppUserDetailService;
 import com.toannguyen.authify.util.JwtUtil;
 
-import io.micrometer.observation.transport.ResponseContext;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,7 +41,7 @@ public class AuthController {
             authenticate(request.getEmail(), request.getPassword());
             final UserDetails userDetail = appUserDetailService.loadUserByUsername(request.getEmail());
             final String token = jwtUtil.generateToken(userDetail);
-            ResponseCookie cookie = ResponseCookie.from("jwk", token)
+            ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .httpOnly(true).path("/").maxAge(Duration.ofDays(1)).sameSite("Strict").build();
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                     .body(new AuthResponse(request.getEmail(), token));

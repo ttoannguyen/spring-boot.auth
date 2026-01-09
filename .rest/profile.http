@@ -16,3 +16,7 @@ Content-Type: application/json
     "email": "toan.nguyen@example.com",
     "password": "123456"
 }
+###
+GET http://localhost:8080/api/v1.0/test
+Content-Type: application/json
+Cookie: jwk=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0b2FuLm5ndXllbkBleGFtcGxlLmNvbSIsImV4cCI6MTc2Nzg5MzUxNCwiaWF0IjoxNzY3ODU3NTE0fQ.gQbUTNBcsnx0oT_X6AFCl3Yc2eBKOfRE2FqDoWqLJN0; Expires=Fri, 09 Jan 2026 07:31:54 GMT; Max-Age=86400; Path=/; HttpOnly; SameSite=Strict; Domain=localhost
