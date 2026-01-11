@@ -23,6 +23,21 @@ spring:
     import:
     - optional:file:.env[.properties]
 
+  mail:
+    host: ${SMTP_SERVER}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          form: nttoan189@gmail.com
+          starttls:
+            enable: true
+    protocol: smtp
+
+
 server:
   port: ${APP_PORT:8081}
   servlet:
@@ -31,3 +46,5 @@ server:
 jwt:
   secret:
     key: ${SECRET_KEY}
+
+

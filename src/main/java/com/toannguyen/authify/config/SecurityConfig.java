@@ -32,9 +32,10 @@ import lombok.experimental.FieldDefaults;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SercurityConfig {
+public class SecurityConfig {
     AppUserDetailService appUserDetailService;
     JwtRequestFilter jwtRequestFilter;
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
@@ -43,7 +44,8 @@ public class SercurityConfig {
                         "/send-reset-opt", "/reset-password", "/logout").permitAll().anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthenticationEntryPoint));
 
         return http.build();
     }

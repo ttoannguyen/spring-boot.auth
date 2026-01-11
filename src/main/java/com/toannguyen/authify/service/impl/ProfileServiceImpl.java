@@ -3,6 +3,7 @@ package com.toannguyen.authify.service.impl;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,6 +35,14 @@ public class ProfileServiceImpl implements ProfileService {
         throw new ResponseStatusException(HttpStatus.CONFLICT, "Email alrealy exists");
     }
 
+    @Override
+    public ProfileResponse getProfile(String email) {
+        UserEntity existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found with email: " + email));
+        return convertToProfileResponse(existingUser);
+
+    }
+
     private ProfileResponse convertToProfileResponse(UserEntity newProfile) {
         return ProfileResponse.builder()
                 .userId(newProfile.getUserId())
@@ -55,4 +64,5 @@ public class ProfileServiceImpl implements ProfileService {
                 .verifyOtpExpiryAt(0L)
                 .build();
     }
+
 }
