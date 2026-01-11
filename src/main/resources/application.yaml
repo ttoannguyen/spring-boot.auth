@@ -32,7 +32,7 @@ spring:
       mail:
         smtp:
           auth: true
-          form: nttoan189@gmail.com
+          from: nttoan189@gmail.com
           starttls:
             enable: true
     protocol: smtp

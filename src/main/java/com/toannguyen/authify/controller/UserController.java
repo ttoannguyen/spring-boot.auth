@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.toannguyen.authify.dto.ProfileRequest;
 import com.toannguyen.authify.dto.ProfileResponse;
+import com.toannguyen.authify.service.EmailService;
 import com.toannguyen.authify.service.ProfileService;
 
 import jakarta.validation.Valid;
@@ -23,11 +24,13 @@ import lombok.experimental.FieldDefaults;
 public class UserController {
 
     ProfileService profileService;
+    EmailService emailService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ProfileResponse register(@Valid @RequestBody ProfileRequest request) {
         ProfileResponse response = profileService.createProfile(request);
+        emailService.sendWelcomeEmail(response.getEmail(), response.getName());
         return response; // Placeholder return statement
     }
 
