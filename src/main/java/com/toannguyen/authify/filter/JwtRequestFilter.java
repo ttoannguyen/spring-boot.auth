@@ -40,12 +40,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String path = request.getServletPath();
-        logRequest(request);
+        // logRequest(request);
         if (PUBLIC_URLS.contains(path)) {
             filterChain.doFilter(request, response);
             return;
         }
-        log.info("hello {}", path);
+        // log.info("hello {}", path);
         String jwt = null;
         String email = null;
 

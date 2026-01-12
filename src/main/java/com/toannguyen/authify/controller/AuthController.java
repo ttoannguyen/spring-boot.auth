@@ -12,16 +12,23 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.toannguyen.authify.dto.ResetPasswordRequest;
 import com.toannguyen.authify.dto.auth.AuthRequest;
 import com.toannguyen.authify.dto.auth.AuthResponse;
+import com.toannguyen.authify.service.ProfileService;
 import com.toannguyen.authify.service.impl.AppUserDetailService;
 import com.toannguyen.authify.util.JwtUtil;
 
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,6 +40,7 @@ public class AuthController {
 
     AuthenticationManager authenticationManager;
     AppUserDetailService appUserDetailService;
+    ProfileService profileService;
     JwtUtil jwtUtil;
 
     @PostMapping("/login")
@@ -65,5 +73,29 @@ public class AuthController {
 
     private void authenticate(String email, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+    }
+
+    @GetMapping("/is-authenticated")
+    public ResponseEntity<Boolean> isAuthenticated(
+            @CurrentSecurityContext(expression = "authentication?.name") String email) {
+        return ResponseEntity.ok(email != null);
+    }
+
+    @PostMapping("/send-reset-otp")
+    public void sendResetOtp(@RequestParam String email) {
+        try {
+            profileService.sendRestOtp(email);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        try {
+            profileService.resetPassword(request.getEmail(), request.getOtp(), request.getNewPassword());
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
     }
 }
